@@ -11,13 +11,16 @@ import { Buffer } from "buffer";
 // Polyfill Buffer for browser environment
 window.Buffer = window.Buffer || Buffer;
 
-// Direct Helius RPC endpoint with API key
-const HELIUS_API_KEY = process.env.REACT_APP_HELIUS_API_KEY;
-const SOLANA_RPC = HELIUS_API_KEY
-  ? `https://mainnet.helius-rpc.com/?api-key=${HELIUS_API_KEY}`
-  : "https://api.mainnet-beta.solana.com";
+// Configure API URL based on environment
+let apiUrl;
+if (process.env.NODE_ENV === "production") {
+  apiUrl = process.env.REACT_APP_API_URL || "/api";
+} else {
+  apiUrl = process.env.REACT_APP_API_URL || "http://localhost:3001/api";
+}
 
-// Configure connection with optimized settings
+// For direct connection (only used for operations that don't require API key)
+const SOLANA_RPC = "https://api.mainnet-beta.solana.com";
 const connection = new Connection(SOLANA_RPC, {
   commitment: "confirmed",
   disableRetryOnRateLimit: false,
@@ -29,8 +32,25 @@ const connection = new Connection(SOLANA_RPC, {
  */
 export const getCurrentSlot = async () => {
   try {
-    const slot = await connection.getSlot();
-    return slot;
+    const response = await fetch(`${apiUrl}/solana`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ action: "getSlot" }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error(data.error || "Unknown error");
+    }
+
+    return data.slot;
   } catch (error) {
     console.error("Error getting current slot:", error.message);
     throw new Error(`Solana connection failed: ${error.message}`);
@@ -43,9 +63,28 @@ export const getCurrentSlot = async () => {
  */
 export const getAccountBalance = async (address) => {
   try {
-    const publicKey = new PublicKey(address);
-    const balance = await connection.getBalance(publicKey);
-    return balance / LAMPORTS_PER_SOL; // Convert lamports to SOL
+    const response = await fetch(`${apiUrl}/solana`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        action: "getBalance",
+        address,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error(data.error || "Unknown error");
+    }
+
+    return data.balance;
   } catch (error) {
     console.error("Error getting account balance:", error.message);
     throw error;
@@ -150,13 +189,6 @@ export const requestAirdrop = async (address, amount = 1) => {
   }
 };
 
-// Check connection on initialization
-connection
-  .getLatestBlockhash()
-  .catch((err) =>
-    console.error("Initial Helius connection failed:", err.message)
-  );
-
-// Export connection for direct use
-export const currentEndpoint = "helius";
+// Export connection related info
+export const currentEndpoint = "mainnet";
 export { connection, SOLANA_RPC };
