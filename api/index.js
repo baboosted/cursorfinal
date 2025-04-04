@@ -22,15 +22,15 @@ app.use((req, res, next) => {
 });
 
 // Health check endpoint
-app.get("/health", (req, res) => {
+app.get("/", (req, res) => {
   res.json({ status: "ok" });
 });
 
-// Handle OPTIONS requests for CORS preflight
-app.options("/claude", cors());
+// Handle OPTIONS requests for CORS preflight for both /claude and /api/claude
+app.options(["/claude", "/api/claude"], cors());
 
-// Claude API proxy endpoint
-app.post("/claude", async (req, res) => {
+// Claude API proxy endpoint - support both /claude and /api/claude for flexibility
+app.post(["/claude", "/api/claude"], async (req, res) => {
   try {
     console.log("Received Claude API request");
     const { messages, system } = req.body;
