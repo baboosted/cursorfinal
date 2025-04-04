@@ -1,36 +1,32 @@
-require("dotenv").config();
-const express = require("express");
-const cors = require("cors");
+// Import dependencies
 const fetch = require("node-fetch");
 
-const app = express();
+// Export the serverless function
+module.exports = async (req, res) => {
+  // Enable CORS
+  res.setHeader("Access-Control-Allow-Credentials", true);
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET,OPTIONS,PATCH,DELETE,POST,PUT"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
+  );
 
-// Middleware
-app.use(
-  cors({
-    origin: "*",
-    methods: ["GET", "POST", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
-app.use(express.json());
+  // Handle OPTIONS request (preflight)
+  if (req.method === "OPTIONS") {
+    res.status(200).end();
+    return;
+  }
 
-// Log all requests for debugging
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
-  next();
-});
+  // Only allow POST requests to proceed
+  if (req.method !== "POST") {
+    res.status(405).json({ error: "Method not allowed" });
+    return;
+  }
 
-// Health check endpoint
-app.get("/", (req, res) => {
-  res.json({ status: "ok" });
-});
-
-// Handle OPTIONS requests for CORS preflight for both /claude and /api/claude
-app.options(["/claude", "/api/claude"], cors());
-
-// Claude API proxy endpoint - support both /claude and /api/claude for flexibility
-app.post(["/claude", "/api/claude"], async (req, res) => {
   try {
     console.log("Received Claude API request");
     const { messages, system } = req.body;
@@ -61,20 +57,9 @@ app.post(["/claude", "/api/claude"], async (req, res) => {
 
     const data = await response.json();
     console.log("Claude API response received");
-    res.json(data);
+    res.status(200).json(data);
   } catch (error) {
     console.error("Server error:", error);
     res.status(500).json({ error: "Internal server error" });
   }
-});
-
-// For local development
-if (process.env.NODE_ENV !== "production") {
-  const port = process.env.PORT || 3001;
-  app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-  });
-}
-
-// For Vercel serverless functions
-module.exports = app;
+};
