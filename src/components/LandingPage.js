@@ -66,7 +66,11 @@ const LandingPage = () => {
       {/* Hero Section */}
       <section className="pt-40 pb-32 px-4 sm:px-6 lg:px-8 relative overflow-hidden min-h-[60vh] bg-white">
         <div className="absolute inset-0 z-0">
-          <BackgroundPaths title="" hideContent={true} className="h-full" />
+          {!isMobile ? (
+            <BackgroundPaths title="" hideContent={true} className="h-full" />
+          ) : (
+            <div className="h-full bg-gradient-to-b from-gray-50/30 to-white/10"></div>
+          )}
         </div>
         <div className="max-w-6xl mx-auto relative z-10">
           <div className="text-center mb-20">
