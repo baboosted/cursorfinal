@@ -37,6 +37,13 @@ export function SplineSceneBasic() {
           className="w-full h-full"
         />
       </div>
+
+      {/* Mobile-only click around message */}
+      {isMobile && (
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 animate-bounce-slow pointer-events-none">
+          <p className="text-white/90 text-sm font-medium">Click around!</p>
+        </div>
+      )}
     </Card>
   );
 }
