@@ -248,8 +248,9 @@
   font-size: 0.85rem;
   transition: all 0.2s;
   background: rgba(255, 255, 255, 0.8);
-  color: #000;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) inset;
+  outline: none;
+  width: 100%;
+  color: #000000;
 }
 
 .input-wrapper input::placeholder {
@@ -359,15 +360,15 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .solana-ai-agent {
-    padding: 2rem 0.5rem;
+    padding: 1rem 0.5rem;
   }
 
   .chat-container {
-    border-radius: 1.5rem;
-    height: 70vh;
+    height: 80vh;
     min-height: 450px;
-    margin: 1rem auto;
-    max-width: 700px;
+    width: 96%;
+    margin: 0.5rem auto;
+    border-radius: 1.5rem;
   }
 
   .chat-header {
@@ -412,8 +413,9 @@
   }
 
   .input-wrapper input {
-    padding: 0.5rem 0.9rem;
-    font-size: 0.85rem;
+    font-size: 16px;
+    padding: 0.6rem 1rem;
+    color: #000000;
   }
 
   .input-wrapper button {
@@ -431,16 +433,16 @@
 
 @media (max-width: 480px) {
   .solana-ai-agent {
-    padding: 1.5rem 0.25rem;
+    padding: 0.5rem 0.25rem;
   }
 
   .chat-container {
-    border-radius: 1.5rem;
-    height: 75vh;
+    height: 85vh;
     min-height: 400px;
     width: 98%;
     margin: 0.5rem auto;
-    max-width: 480px;
+    border-radius: 1.25rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
   }
 
   .chat-header {
@@ -485,8 +487,9 @@
   }
 
   .input-wrapper input {
-    padding: 0.45rem 0.7rem;
-    font-size: 0.8rem;
+    font-size: 16px;
+    padding: 0.6rem 1rem;
+    color: #000000;
   }
 
   .input-wrapper button {
@@ -513,12 +516,12 @@
 
 @media (max-width: 380px) {
   .solana-ai-agent {
-    padding: 1rem 0.15rem;
+    padding: 0.5rem 0.15rem;
   }
 
   .chat-container {
     border-radius: 1.25rem;
-    height: 80vh;
+    height: 82vh;
     width: 100%;
     margin: 0.25rem auto;
   }
@@ -551,8 +554,9 @@
   }
 
   .input-wrapper input {
-    padding: 0.4rem 0.65rem;
-    font-size: 0.75rem;
+    font-size: 16px;
+    padding: 0.6rem 0.8rem;
+    color: #000000;
   }
 
   .input-wrapper button {
